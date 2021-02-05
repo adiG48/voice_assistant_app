@@ -1,4 +1,6 @@
 from tkinter import *
+from tkinter import StringVar
+import time
 import pyttsx3
 import datetime
 import speech_recognition as sr
@@ -11,8 +13,7 @@ engine = pyttsx3.init()
 voices = engine.getProperty('voices')
 engine.setProperty('voice', voices[1].id)
 window = Tk()
-global var
-global var1
+
 var = StringVar()
 var1 = StringVar()
 
@@ -24,7 +25,7 @@ def speak(audio):
 
 def send(msg):
     with smtplib.SMTP_SSL('smtp.gmail.com', 465) as smtp:
-        smtp.login('adithyaaaibot@gmail.com', '@diG489840')
+        smtp.login('example@gmail.com', 'password')
         smtp.send_message(msg)
 
 
@@ -60,6 +61,7 @@ def takecommand():
         print("Recognizing")
         query = r.recognize_google(audio, language='en-in')
     except Exception as e:
+        print(e)
         return "None"
     var1.set(query)
     window.update()
@@ -79,19 +81,23 @@ def play():
             btn1.configure(bg='#5C85FB')
             btn2['state'] = 'normal'
             btn2.configure(bg='#12cee3')
+            label.configure(image=frames10)
             window.update()
             speak("Bye sir")
             break
 
         elif 'play' in query:
+            label.configure(image=frames8)
+            window.update()
             song = query.replace('play', '')
             speak('Playing' + song)
             pywhatkit.playonyt(song)
-            window.update()
-            takecommand()
-            window.update()
+            continue
+
         elif 'who is' in query:
             person = query.replace('who is', '')
+            label.configure(image=frames11)
+            window.update()
             info = wikipedia.summary(person, 1)
             speak(info)
 
@@ -103,39 +109,63 @@ def play():
         elif 'the time' in query:
             strtime = datetime.datetime.now().strftime("%H:%M:%S")
             var.set("Sir the time is %s" % strtime)
+            label.configure(image=frames2)
             window.update()
             speak("Sir the time is %s" % strtime)
+
+        elif 'whatsapp message' in query:
+            label.configure(image=frames5)
+            d = {'name': '+91'phone number''}
+            speak('to whom u want to message')
+            c = takecommand()
+            e = d[c]
+            speak('Tell me the message')
+            f = takecommand()
+            speak("at what hour u want to send")
+            a = int(takecommand())
+            speak(" at what minute u want to send")
+            b = int(takecommand())
+            window.update()
+            pywhatkit.sendwhatmsg(e, f, a, b, 10)
+            continue
 
         elif 'the date' in query:
             strdate = datetime.datetime.today().strftime("%d %m %y")
             var.set("Sir today's date is %s" % strdate)
+            label.configure(image=frames4)
             window.update()
             speak("Sir today's date is %s" % strdate)
 
         elif 'thank you' in query:
             var.set("Welcome Sir")
+            label.configure(image=frames12)
             window.update()
             speak("Welcome Sir")
 
         elif 'your name' in query:
-            var.set("Hi, Im @diG48 the Robot. Speed 1 terahertz, memory 1 zigabyte  ")
+            label.configure(image=frames0)
+            var.set("Hi, Im @diG48 the Robot. Speed 1 terahertz, memory 1 gigabyte  ")
             window.update()
-            speak('Hi, Im @diG48 the Robot. Speed 1 terahertz, memory 1 zigabyte ')
+            speak('Hi, Im @diG48 the Robot. Speed 1 terahertz, memory 1 gigabyte ')
 
         elif 'who created you' in query:
+            label.configure(image=frames9)
             var.set('I was created by AdithyaaG48')
             window.update()
             speak('I was created by AdithyaaG48')
 
-        elif 'say hello' in query:
+        elif 'hello' in query:
+            label.configure(image=frames6)
             var.set('Hello Everyone! My self @diG48')
             window.update()
             speak('Hello Everyone! My self @diG48')
 
         elif 'email' in query:
+            label.configure(image=frames3)
+            window.update()
             try:
                 msg = EmailMessage()
-                c = {'black': 'adithyaasankar2@gmail.com', 'Shiny mam': 'shiny.suresh@gmail.com'}
+                c = {'name': 'example@gmail.com'}
                 speak('To Whom You Want To Send Email')
                 b = takecommand()
                 d = c[b]
@@ -150,14 +180,19 @@ def play():
                 send(msg)
                 var.set('Your Email Has Been Sent Sir!!')
                 speak('Your Email Has Been Sent Sir!!')
-
+                time.sleep(1)
             except Exception as e:
                 print(e)
                 var.set("Sorry Sir! I was not able to send this email")
                 window.update()
                 speak('Sorry Sir! I was not able to send this email')
         elif 'joke' in query:
+            label.configure(image=frames7)
+            window.update()
             speak(pyjokes.get_joke())
+        else:
+            if 'None' in query:
+                speak('Unable to detect your voice')
 
 
 def update(ind):
@@ -176,11 +211,24 @@ label1 = Label(window, textvariable=var, bg='#ADD8E6')
 label1.config(font=("Courier", 20))
 var.set('Welcome')
 label1.pack()
-
 frames = [PhotoImage(file='Assistant3.gif', format='gif -index %i' % i) for i in range(100)]
+frames0 = [PhotoImage(file='name.png')]
+frames1 = [PhotoImage(file='creator.png')]
+frames2 = [PhotoImage(file='time.png')]
+frames3 = [PhotoImage(file='MAIL.png')]
+frames4 = [PhotoImage(file='date.png')]
+frames5 = [PhotoImage(file='WA.png')]
+frames6 = [PhotoImage(file='hello.png')]
+frames7 = [PhotoImage(file='joker.png')]
+frames8 = [PhotoImage(file='YT.png')]
+frames9 = [PhotoImage(file='creator.png')]
+frames10 = [PhotoImage(file='bye.png')]
+frames11 = [PhotoImage(file='who.png')]
+frames12 = [PhotoImage(file='welcome.png')]
+
 window.title('@diG48')
 
-label = Label(window, width=1000, height=500)
+label = Label(window, width=1000, height=700)
 label.pack()
 window.after(0, update, 0)
 
